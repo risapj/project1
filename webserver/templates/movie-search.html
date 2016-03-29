@@ -1,0 +1,51 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family:arial;
+    }
+  </style>
+
+
+  <body>
+  <div>{{data}}</div>
+
+      <table border = 1>
+         <thead>
+            <td>Title</td>
+            <td>Length</td>
+            <td>Language</td>
+            <td>Genre</td>
+         </thead>
+         
+         {% for row in data %}
+            <tr>
+               <td>{{row["title"]}}</td>
+               <td>{{row["length"]}}</td>
+               <td> {{row["language"]}}</td>
+               <td>{{row["genre"]}}</td>	
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">Go back to home page</a>
+
+<!--
+    <h1>Movie Search</h1>
+    <div class="container">
+      <strong>Movie Search</strong>
+      <select id="title">
+        <option>All</option>
+        {% for title in movies %}
+          {% if title[0] == chosen_title %}
+          <option selected>{{ title[0] }}</option>
+          {% else %}
+          <option>{{title[0]}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
+    </div> 
+-->
+  </body>
+</html>

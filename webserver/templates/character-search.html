@@ -1,0 +1,27 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family:arial;
+    }
+  </style>
+
+
+  <body>
+    <h1>Character Search</h1>
+    <div class="container">
+      <strong>Character Search</strong>
+      <select id="char">
+        <option>All</option>
+        {% for char in character %}
+          {% if char[0] == chosen_char %}
+          <option selected>{{ char[0] }}</option>
+          {% else %}
+          <option>{{char[0]}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
+    </div> 
+  </body>
+</html>

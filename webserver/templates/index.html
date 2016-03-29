@@ -6,10 +6,62 @@
     }
   </style>
 
+  <head>
+     <h1>Movie Database</h1>
+  </head>
 
-<body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
+
+
+  <body>
+  
+    <div class="container">
+      <strong>Movie</strong>
+      <select id="Movie">
+      	<option >All</option>
+        {% for Movie in Movie %}
+        	{% if [0] == chosen_movie %}
+        	<option selected>{{ Movie[0] }}</option>
+        	{% else %}
+        	<option >{{ Movie[0] }}</option>
+        	{% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button>
+    </div>
+
+
+  
+    <div class="container">
+      <strong>Person</strong>
+      <select id="Person">
+      	<option >All</option>
+        {% for Person in Person %}
+        	{% if [0] == chosen_person %}
+        	<option selected>{{ Person[0] }}</option>
+        	{% else %}
+        	<option >{{ Person[0] }}</option>
+        	{% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button>
+    </div>
+
+
+    <div class="container">
+      <strong>Awards</strong>
+      <select id="Awards">
+      	<option >All</option>
+        {% for Awards in Awards %}
+        	{% if [0] == chosen_award %}
+        	<option selected>{{ Awards[0] }}</option>
+        	{% else %}
+        	<option >{{ Awards[0] }}</option>
+        	{% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button>
+    </div>
+
 
   <div>
     {% for n in data %}
@@ -18,6 +70,7 @@
   </div>
 
 <p><a href="/another">Go to the other page</a></p>
+<p><a href="/yo">Other page</a></p>
 
 <form method="POST" action="/add">
 <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>

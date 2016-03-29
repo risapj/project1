@@ -1,0 +1,58 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+  <body>
+    <h1>Movie Database</h1>
+<!--
+    <div class="container">
+      <button class="droptbtn">Search Category (hover)</button>
+      <div class="dropdown-content">
+        <a href="/movie-search">Movie</a>
+        <a href="/person-search">Person</a>
+        <a href="/award-search">Award</a>
+        <a href="character-search">Character</a>
+      </div>
+    </div>
+
+commented out to try stuff below
+-->
+<strong> Select a Movie </strong>
+<select id=foo>
+    <option>Please select</option>
+    {% for stuff in data %}
+    <option>{{stuff}}</option>
+    {% endfor %}
+</select>
+
+    <h1>Movie Search</h1>
+
+      <strong>Movie Search</strong>
+      <select id="title">
+        <option>All</option>
+        {% for stuff in data %}
+          {% if stuff == chosen_title %}
+          <option selected>{{ stuff}}</option>
+          {% else %}
+          <option>{{stuff}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
+
+<!-- below works, and sends you to the approriate page but pages dont work-->
+<select onchange="location = this.options[this.selectedIndex].value;">
+    <option>Please select</option>
+        <option value="/danishgirl">The Danish Girl</option>
+        <option value="/person-search">Person</a>
+        <option value="/award-search">Award</a>
+        <option value="/character-search">Character</a>    
+</select>
+
+  </body>
+</html>

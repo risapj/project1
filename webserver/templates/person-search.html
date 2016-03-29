@@ -1,0 +1,27 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family:arial;
+    }
+  </style>
+
+
+  <body>
+    <h1>Person Search</h1>
+    <div class="container">
+      <strong>Person Search</strong>
+      <select id="name">
+        <option>All</option>
+        {% for name in persons %}
+          {% if name[0] == chosen_name %}
+          <option selected>{{ name[0] }}</option>
+          {% else %}
+          <option>{{name[0]}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
+    </div> 
+  </body>
+</html>

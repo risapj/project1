@@ -1,0 +1,28 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family:arial;
+    }
+  </style>
+
+
+  <body>
+    <h1>Award Search</h1>
+    <div class="container">
+      <strong>Award Search</strong>
+      <select id="award">
+        <option>All</option>
+        {% for award in awards %}
+          {% if award[0] == chosen_award %}
+          <option selected>{{ award[0] }}</option>
+          {% else %}
+          <option>{{award[0]}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
+    </div> 
+  </body>
+</html>
+
