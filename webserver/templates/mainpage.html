@@ -21,7 +21,7 @@
     </div>
 
 commented out to try stuff below
--->
+
 <strong> Select a Movie </strong>
 <select id=foo>
     <option>Please select</option>
@@ -29,9 +29,8 @@ commented out to try stuff below
     <option>{{stuff}}</option>
     {% endfor %}
 </select>
-
-    <h1>Movie Search</h1>
-
+-->
+<!--
       <strong>Movie Search</strong>
       <select id="title">
         <option>All</option>
@@ -44,14 +43,14 @@ commented out to try stuff below
         {% endfor %}
       </select>
       <button id="submit" type="button" class="btn btn-primary">Submit</button> 
-
+-->
 <!-- below works, and sends you to the approriate page but pages dont work-->
 <select onchange="location = this.options[this.selectedIndex].value;">
     <option>Please select</option>
-        <option value="/danishgirl">The Danish Girl</option>
-        <option value="/person-search">Person</a>
-        <option value="/award-search">Award</a>
-        <option value="/character-search">Character</a>    
+        <option value="/movie-search">Movies</option>
+        <option value="/person-search">People</a>
+        <option value="/award-search">Awards</a>
+        <option value="/character-search">Characters</a>    
 </select>
 
   </body>

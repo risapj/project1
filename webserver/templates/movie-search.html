@@ -5,10 +5,35 @@
       font-family:arial;
     }
   </style>
-
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/jquery.js"></script>
+    <script src="../static/action.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    <!-- personal css -->
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Movie Database</title>
+  </head>
 
   <body>
-  <div>{{data}}</div>
+      <strong>Movie Search</strong>
+      <select id="title">
+        <option>All</option>
+        {% for stuff in data %}
+          {% if stuff == chosen_title %}
+          <option selected>{{ stuff}}</option>
+          {% else %}
+          <option>{{stuff}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button>      
+
+<!--  <div>{{data}}</div>   -->
 
       <table border = 1>
          <thead>
@@ -18,7 +43,7 @@
             <td>Genre</td>
          </thead>
          
-         {% for row in data %}
+         {% for row in data2 %}
             <tr>
                <td>{{row["title"]}}</td>
                <td>{{row["length"]}}</td>
@@ -27,25 +52,8 @@
             </tr>
          {% endfor %}
       </table>
+<div>{{results}}</div>
       
       <a href = "/">Go back to home page</a>
-
-<!--
-    <h1>Movie Search</h1>
-    <div class="container">
-      <strong>Movie Search</strong>
-      <select id="title">
-        <option>All</option>
-        {% for title in movies %}
-          {% if title[0] == chosen_title %}
-          <option selected>{{ title[0] }}</option>
-          {% else %}
-          <option>{{title[0]}}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
-    </div> 
--->
   </body>
 </html>

@@ -8,20 +8,39 @@
 
 
   <body>
-    <h1>Person Search</h1>
-    <div class="container">
-      <strong>Person Search</strong>
-      <select id="name">
+      <strong>Search People</strong>
+      <select id="title">
         <option>All</option>
-        {% for name in persons %}
-          {% if name[0] == chosen_name %}
-          <option selected>{{ name[0] }}</option>
+        {% for stuff in data %}
+          {% if stuff == chosen_title %}
+          <option selected>{{ stuff}}</option>
           {% else %}
-          <option>{{name[0]}}</option>
+          <option>{{stuff}}</option>
           {% endif %}
         {% endfor %}
       </select>
-      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
-    </div> 
+
+<!--  <div>{{data}}</div>   -->
+
+      <table border = 1>
+         <thead>
+            <td>Name</td>
+            <td>Birthdate</td>
+            <td>Hometown</td>
+            <td>Education</td>
+         </thead>
+
+         {% for row in data2 %}
+            <tr>
+               <td>{{row["name"]}}</td>
+               <td>{{row['birthdate']}}</td>
+               <td> {{row["hometown"]}}</td>
+               <td>{{row["education"]}}</td>
+            </tr>
+         {% endfor %}
+      </table>
+
+      <a href = "/">Go back to home page</a>
+
   </body>
 </html>
