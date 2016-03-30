@@ -20,7 +20,7 @@ function trigger(element) {
 
     $("#submit").click(function(){
     	var title = getInnerHTML("title");
-	var url = window.location.href;
+	var url = 'http://13.82.29.208:8111/movie-search';
       window.location.href = url + '?title=' + title;
     });
 });
