@@ -1,80 +1,20 @@
-#!/usr/bin/env python2.7
-
-"""
-Columbia W4111 Intro to databases
-Example webserver
-
-To run locally
-
-    python server.py
-
-Go to http://localhost:8111 in your browser
-
-
-A debugger such as "pdb" may be helpful for debugging.
-Read about it online.
-"""
+#/usr/bin/env python2.7
 
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+import jinja2
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-
-#
-# The following uses the sqlite3 database test.db -- you can use this for debugging purposes
-# However for the project you will need to connect to your Part 2 database in order to use the
-# data
-#
-# XXX: The URI should be in the format of: 
-#
-#     postgresql://USER:PASSWORD@w4111db.eastus.cloudapp.azure.com/username
-#
-# For example, if you had username ewu2493, password foobar, then the following line would be:
-#
-#     DATABASEURI = "postgresql://ewu2493:foobar@w4111db.eastus.cloudapp.azure.com/ewu2493"
-#
-
-DATABASEURI = "sqlite:///test.db"
-
-#DATABASEURI = "postgres://trw2121:JVTTMM@w4111db.eastus.cloudapp.azure.com/trw2121"
-
+DATABASEURI = "postgresql://trw2121:JVTTMM@w4111db.eastus.cloudapp.azure.com/trw2121"
 
 #
 # This line creates a database engine that knows how to connect to the URI above
 #
 engine = create_engine(DATABASEURI)
-
-
-#
-# START SQLITE SETUP CODE
-#
-# after these statements run, you should see a file test.db in your webserver/ directory
-# this is a sqlite database that you can query like psql typing in the shell command line:
-# 
-#     sqlite3 test.db
-#
-# The following sqlite3 commands may be useful:
-# 
-#     .tables               -- will list the tables in the database
-#     .schema <tablename>   -- print CREATE TABLE statement for table
-# 
-# The setup code should be deleted once you switch to using the Part 2 postgresql database
-#
-engine.execute("""DROP TABLE IF EXISTS test;""")
-engine.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-#
-# END SQLITE SETUP CODE
-#
-
-
 
 @app.before_request
 def before_request():
@@ -103,91 +43,336 @@ def teardown_request(exception):
   except Exception as e:
     pass
 
-
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to e.g., localhost:8111/foobar/ with POST or GET then you could use
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-# 
-# see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
-def index():
-  """
-  request is a special object that Flask provides to access web request information:
-
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-  See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
-  """
-
-  # DEBUG: this is debugging code to see what request looks like
-  print request.args
+def mainpage():
+  return render_template("mainpage.html")
 
 
-  #
-  # example of a database query
-  #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+@app.route('/movie-search')
+@app.route('/movie-search<search>')
+def moviesearch(search=None):
+#get all info from Movie
+  forTable = g.conn.execute("SELECT * FROM Movie")
+  minfo = forTable.fetchall()
 
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be 
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #     
-  #     # creates a <div> tag for each element in data
-  #     # will print: 
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
-  context = dict(data = names)
+#get info from Movie, create array, put titles in array 
+  ddmenu = g.conn.execute("SELECT * FROM Movie")
+  movies = []
+  for result in ddmenu:
+    movies.append(result['title'].encode('utf-8'))
+
+  title = request.args.get('title')
+
+  if title == "All":
+    title = None
+    
+
+  if title:  
+    results = g.conn.execute("SELECT * FROM Movie M WHERE M.title = \'"+title +"\'")
+  else:
+    results = g.conn.execute("SELECT * FROM Movie M")
+
+  people = g.conn.execute("SELECT P.pid, P.name, A.char_name, A.mid FROM Person P, Acts_in A WHERE A.pid=P.pid")
+  director = g.conn.execute("SELECT P.name, D.pid, D.mid FROM Person P, Directs D WHERE D.pid = P.pid")
+  writer = g.conn.execute("SELECT P.name, W.pid, W.mid FROM Person P, Writes W WHERE W.pid = P.pid")
+  awards = g.conn.execute("SELECT A.year, A.type, A.category, N.won, P.name, N.mid FROM Awards A, Nominated_p N, Person p WHERE N.pid=P.pid AND N.aid=A.aid")
+  awardm = g.conn.execute("SELECT A.year, A.type, A.category, N.won, N.mid FROM Awards A, Nominated_m N WHERE N.aid=A.aid")
+  review = g.conn.execute("SELECT R.username, R.rev_text, R.post_date, R.mid FROM Review_posted R")
+  rating = g.conn.execute("SELECT R.username, R.rating, R.post_date, R.mid FROM Rating_rated R")
+  user = g.conn.execute("SELECT U.username FROM Users U") 
+
+ # rinfo = results.fetchall()
+  final_results = []
+  for result in results:
+    current_movie = {}
+    current_movie["info"] = [result[1], result[2], result[3], result[4], result[5], result[6]]
+    movie_id = str(result[0])
+    people_array = []
+    for p in people:
+      if movie_id == str(p[3]):
+        people_array.append([p[1].encode('utf-8'), p[2].encode('utf-8')])
+    current_movie["actors"] = people_array
+    director_array = []
+    for d in director:
+      if movie_id == str(d[2]):
+        director_array.append([d[0].encode('utf-8')])
+    current_movie["director"] = director_array
+    writer_array = [] 
+    for w in writer:
+      if movie_id == str(w[2]):
+        writer_array.append([w[0].encode('utf-8')])
+    current_movie["writer"] = writer_array
+    awardp_array = []
+    for ap in awards:
+      if movie_id == str(ap[5]):
+        won = str(ap[3])
+        won2 = "t"
+        if won == won2:
+          win = 'Won'
+        else:
+          win = 'Nominated'
+        awardp_array.append([ap[0], ap[1].encode('utf-8'), ap[2].encode('utf-8'), ap[4].encode('utf-8'), win])
+    current_movie["awardp"] = awardp_array
+    awardm_array = []
+    for am in awardm:
+      if movie_id == str(am[4]):
+        won = str(ap[3])
+        won2 = "t"
+        if won == won2:
+          win = 'Won'
+        else:
+          win = 'Nominated'
+        awardm_array.append([am[0], am[1].encode('utf-8'), am[2].encode('utf-8'), win])
+    current_movie["awardm"] = awardm_array
+    review_array = []
+    for rev in review:
+      if movie_id == str(rev[3]):
+        for u in user: 
+          if str(u[0]) == str(rev[0]):
+            review_array.append([u[0].encode('utf-8'), rev[1].encode('utf-8'), rev[2]])
+    current_movie["reviews"] = review_array
+    rating_array = []
+    for rat in rating:
+      if movie_id == str(rat[3]):
+        for u in user:
+          if str(u[0]) == str(rat[0]):
+            rating_array.append([u[0].encode('utf-8'), rat[1], rat[2]])
+    current_movie["ratings"] = rating_array
+    final_results.append(current_movie)
+
+  return render_template('movie-search.html', data = movies, data2 = minfo, chosen_title = title, title = title, results = final_results)
 
 
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
-  return render_template("index.html", **context)
+@app.route('/person-search')
+@app.route('/person-search<search>')
+def personsearch(search=None):
+#get all info from Person
+  forTable = g.conn.execute("SELECT * FROM Person")
+  pinfo = forTable.fetchall()
 
-#
-# This is an example of a different path.  You can see it at
-# 
-#     localhost:8111/another
-#
-# notice that the functio name is another() rather than index()
-# the functions for each app.route needs to have different names
-#
-@app.route('/another')
-def another():
-  return render_template("anotherfile.html")
+#get info from Movie, create array, put titles in array 
+  ddmenu = g.conn.execute("SELECT * FROM Person")
+  people = []
+  for result in ddmenu:
+    people.append(result['name'].encode('utf-8'))
+
+  name = request.args.get('name')
+
+  if name == "All":
+    name = None
+  if name:
+    results = g.conn.execute("SELECT * FROM Person P WHERE P.name = \'"+name+"\'")
+  else:
+    results = g.conn.execute("SELECT * FROM Person P")
+
+  moviechar = g.conn.execute("SELECT A.pid, A.char_name, M.title, M.release_date, M.mid FROM Acts_in A, Movie M WHERE A.mid=M.mid")
+  director = g.conn.execute("SELECT D.pid, M.title, M.release_date, M.mid FROM Directs D, Movie M WHERE D.mid=M.mid")
+  writer = g.conn.execute("SELECT W.pid, M.title, M.release_date, M.mid FROM Writes W, Movie M WHERE W.mid=M.mid")
+  awards = g.conn.execute("SELECT N.pid, A.year, A.type, A.category, N.won, M.title FROM Nominated_p N, Awards A, Movie M WHERE A.aid=N.aid AND N.mid=M.mid")
+
+  final_results = []
+  for result in results:
+    current_person = {}
+    current_person["info"] = [result[1], str(result[2]), result[3], result[4]]
+    person_id = str(result[0])
+    moviechar_array = []
+    for mc in  moviechar:
+      if person_id == str(mc[0]):
+        moviechar_array.append([mc[1].encode('utf-8'), mc[2].encode('utf-8'), mc[3]])
+    current_person["moviechar"] = moviechar_array
+    director_array = []
+    for d in director:
+      if person_id == str(d[0]):
+        director_array.append([d[1].encode('utf-8'), d[2]])
+    current_person["director"] = director_array
+    writer_array = []
+    for w in writer:
+      if person_id == str(w[0]):
+        writer_array.append([w[1].encode('utf-8'), w[2]])
+    current_person["writer"] = writer_array
+    award_array = []
+    for a in awards:
+      if person_id == str(a[0]):
+        won = str(a[4])
+        won2 = "t"
+        if won == won2:
+          win = 'Won'
+        else:
+          win = 'Nominated'
+        award_array.append([a[5].encode('utf-8'), a[1], a[2].encode('utf-8'), a[3].encode('utf-8'), win])
+    current_person["award"] = award_array
+    final_results.append(current_person)
+
+  return render_template("person-search.html", name = name, chosen_name = name, data = people, data2 = pinfo, results= final_results)
+
+
+@app.route('/award-search')
+@app.route('/award-search<search>')
+def index(search=None):
+
+  ay = []
+  awardYear = g.conn.execute("SELECT DISTINCT A.year FROM Awards A")
+  for year in awardYear:
+    ay.append(str(year[0]).encode('utf-8'))
+
+  awardType = g.conn.execute("SELECT DISTINCT A.type FROM Awards A")
+  at = []
+  for ty in awardType:
+    at.append(ty[0].encode('utf-8'))
+
+  awardCat = g.conn.execute("SELECT DISTINCT A.category FROM Awards A")
+  ac = []
+  for result in awardCat:
+    ac.append(result[0].encode('utf-8'))
+
+  year =  request.args.get('year')
+  atype =  request.args.get('atype')
+  category = request.args.get('category')
+
+  if year == "All":
+    year = None
+  if atype == "All":
+    atype = None
+  if category == "All":
+    category = None
+
+
+  if atype and category and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+  elif atype:
+    results=g.conn.execute("SELECT * FROM Awards A WHERE A.type = \'" + atype + "\'")
+  elif category:
+    results=g.conn.execute("SELECT * FROM Awards A WHERE A.category=\'" + category + "\'")
+  elif atype and category:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\'")
+  elif atype and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.year =\'"+year+"\'")
+  elif category and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+  else:
+    results=g.conn.execute("SELECT * FROM Awards A")
+
+  moviesp = g.conn.execute("SELECT M.mid, M.title, P.name, N.aid, N.won FROM Movie M, Person P, Nominated_p N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid AND N.pid=P.pid")
+  moviesm = g.conn.execute("SELECT M.mid, M.title, N.aid, N.won FROM Movie M, Nominated_m N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid")
+
+  final_results = []
+  for result in results:
+    current_award = {}
+    current_award["info"] = [result[1], result[2], result[3]]
+    aid = str(result[0])
+    mp_array = []
+    for mp in moviesp:
+      if aid == str(mp[3]):
+        won = str(mp[4])
+        won2 = "t"
+        if won ==won2:
+          win = 'Won'
+        else:
+          win = 'Nominated'
+        mp_array.append([mp[1].encode('utf-8'), mp[2].encode('utf-8'), win])
+    current_award["moviep"] = mp_array
+    m_array = []
+    for m in moviesm:
+      if aid == str(m[2]):
+        won = str(m[3])
+        won2 = "t"
+        if won==won2:
+          win = 'Won'
+        else:
+          win = 'Nominated'
+        m_array.append([m[1].encode('utf-8'), win])
+    current_award["moviem"] = m_array
+    final_results.append(current_award) 
+
+  return render_template('award-search.html', awardYear = ay, awardType=at, awardCat=ac, chosen_year = ay, chosen_type = at, chosen_cat = ac, results=final_results)
+
+@app.route('/user-search')
+@app.route('/user-search<search>')
+def usersearch(search=None):
+#get all info from User
+  forTable = g.conn.execute("SELECT * FROM Users")
+  uinfo = forTable.fetchall()
+
+#get info from User, create array, put usernames in array
+  ddmenu = g.conn.execute("SELECT * FROM Users")
+  user = []
+  for result in ddmenu:
+    user.append(result['username'].encode('utf-8'))
+
+  username = request.args.get('username')
+
+  if username == "All":
+    name = None
+  if username:
+    results = g.conn.execute("SELECT * FROM Users U WHERE U.username = \'"+username+"\'")
+  else:
+    results = g.conn.execute("SELECT * FROM Users U")
+
+  review = g.conn.execute("SELECT R.username, M.title, R.rev_text, R.post_date FROM Movie M, Review_posted R WHERE R.mid = M.mid")
+  rating = g.conn.execute("SELECT R.username, M.title, R.rating, R.post_date FROM Movie M, Rating_rated R WHERE R.mid = M.mid")
+
+  final_results = []
+  for result in results:
+    current_user = {}
+    current_user["info"] = [result[0], result[1], result[2], result[3]]
+    uname = result[0]
+    review_array = []
+    for rev in review:
+      if uname == str(rev[0]):
+        review_array.append([rev[1].encode('utf-8'), rev[2].encode('utf-8'), rev[3]])
+    current_user["review"] = review_array
+    rating_array = []
+    for rat in rating:
+      if uname == str(rat[0]):
+        rating_array.append([rat[1].encode('utf-8'), rat[2], rat[3]])
+    current_user["rating"] = rating_array
+    final_results.append(current_user)
+  
+  return render_template("user-search.html", username = username, chosen_username = username, data = user, data2 = uinfo, results=final_results)
+
+
+@app.route('/character-search')
+@app.route('/character-search<search>')
+def characterearch(search=None):
+#get all info from Character
+  forTable = g.conn.execute("SELECT * FROM Character")
+  cinfo = forTable.fetchall()
+
+  ddmenu = g.conn.execute("SELECT * FROM Character")
+  charac = []
+  for result in ddmenu:
+    charac.append(result['char_name'].encode('utf-8'))
+
+  char_name = request.args.get('char_name')
+
+  if char_name == "All":
+    char_name = None
+
+  if char_name:
+    results = g.conn.execute("SELECT * FROM Character C WHERE C.char_name = \'"+char_name+"\'")
+  else:
+    results = g.conn.execute("SELECT * FROM Character C")
+
+  moviechar = g.conn.execute("SELECT A.pid, A.char_name, M.mid, M.title, M.length, M.language, M.release_date, M.production_co, M.genre FROM Acts_in A, Movie M WHERE A.mid=M.mid")
+  actors = g.conn.execute("SELECT P.pid, P.name, A.char_name, A.mid FROM Person P, Acts_in A WHERE A.pid=P.pid") 
+
+  final_results = []
+  for result in results:
+    current_char = {}
+    current_char["info"] = [result[0]]
+    current_movie = []
+    current_actor = []
+    for actor in actors:
+      if str(actor[2]) == str(result[0]):
+        current_actor.append(actor[1])
+    current_char["person_info"] = current_actor
+    for mc in moviechar:
+      if str(mc[1]) == str(result[0]):
+        current_movie.append([mc[3]])
+    current_char["movie_info"] = current_movie
+    final_results.append(current_char)
+
+  return render_template("/character-search.html", chosen_char = char_name, char_name = char_name, cinfo = cinfo, results = final_results)
 
 
 # Example of adding new data to the database
