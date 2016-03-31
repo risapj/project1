@@ -58,9 +58,10 @@
       </select>
       <button id="submit-award" type="button" class="btn btn-primary">Submit</button> 
 
+
       {% for result in results %}
               {% set info = result["info"] %}
-          <h2>Year: {{info[0]}} Type: {{info[1]}} Category: {{info[2]}}</h2>
+          <h2>{{info[0]}} {{info[1]}} {{info[2]}}</h2>
           <p></p>
                {% set movp = result["moviep"] %}
           {% for mp in movp %}
@@ -75,4 +76,3 @@
       <a href = "/">Go back to home page</a>
   </body>
 </html>
-

@@ -73,13 +73,21 @@ def moviesearch(search=None):
     results = g.conn.execute("SELECT * FROM Movie M")
 
   people = g.conn.execute("SELECT P.pid, P.name, A.char_name, A.mid FROM Person P, Acts_in A WHERE A.pid=P.pid")
+  people = people.fetchall()
   director = g.conn.execute("SELECT P.name, D.pid, D.mid FROM Person P, Directs D WHERE D.pid = P.pid")
+  director = director.fetchall()
   writer = g.conn.execute("SELECT P.name, W.pid, W.mid FROM Person P, Writes W WHERE W.pid = P.pid")
+  writer = wrtier.fetchall()
   awards = g.conn.execute("SELECT A.year, A.type, A.category, N.won, P.name, N.mid FROM Awards A, Nominated_p N, Person p WHERE N.pid=P.pid AND N.aid=A.aid")
+  awards = awards.fetchall()
   awardm = g.conn.execute("SELECT A.year, A.type, A.category, N.won, N.mid FROM Awards A, Nominated_m N WHERE N.aid=A.aid")
+  awardm = awardm.fetchall()
   review = g.conn.execute("SELECT R.username, R.rev_text, R.post_date, R.mid FROM Review_posted R")
+  review = review.fetchall()
   rating = g.conn.execute("SELECT R.username, R.rating, R.post_date, R.mid FROM Rating_rated R")
+  rating = rating.fetchall()
   user = g.conn.execute("SELECT U.username FROM Users U") 
+  user = user.fetchall()
 
  # rinfo = results.fetchall()
   final_results = []
@@ -166,9 +174,13 @@ def personsearch(search=None):
     results = g.conn.execute("SELECT * FROM Person P")
 
   moviechar = g.conn.execute("SELECT A.pid, A.char_name, M.title, M.release_date, M.mid FROM Acts_in A, Movie M WHERE A.mid=M.mid")
+  moviechar = moviechar.fetchall()
   director = g.conn.execute("SELECT D.pid, M.title, M.release_date, M.mid FROM Directs D, Movie M WHERE D.mid=M.mid")
+  director = director.fetchall()
   writer = g.conn.execute("SELECT W.pid, M.title, M.release_date, M.mid FROM Writes W, Movie M WHERE W.mid=M.mid")
+  writer = writer.fetchall()
   awards = g.conn.execute("SELECT N.pid, A.year, A.type, A.category, N.won, M.title FROM Nominated_p N, Awards A, Movie M WHERE A.aid=N.aid AND N.mid=M.mid")
+  awards = awards.fetchall()
 
   final_results = []
   for result in results:
@@ -238,22 +250,26 @@ def index(search=None):
 
 
   if atype and category and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\' AND A.type = \'"+atype+"\'")
+  elif atype and category:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.type =\'"+atype+"\'")
+  elif atype and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.year = \'"+year+"\' AND A.type=\'" + atype + "\'")
+  elif category and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
   elif atype:
     results=g.conn.execute("SELECT * FROM Awards A WHERE A.type = \'" + atype + "\'")
   elif category:
     results=g.conn.execute("SELECT * FROM Awards A WHERE A.category=\'" + category + "\'")
-  elif atype and category:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\'")
-  elif atype and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.year =\'"+year+"\'")
-  elif category and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+  elif year:
+    results = g.conn.execute("SELECT * FROM Awards A WHERE A.year = \'"+year+"\'")
   else:
     results=g.conn.execute("SELECT * FROM Awards A")
-
+  
   moviesp = g.conn.execute("SELECT M.mid, M.title, P.name, N.aid, N.won FROM Movie M, Person P, Nominated_p N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid AND N.pid=P.pid")
+  moviesp = moviesp.fetchall()
   moviesm = g.conn.execute("SELECT M.mid, M.title, N.aid, N.won FROM Movie M, Nominated_m N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid")
+  moviesm = moviesm.fetchall()
 
   final_results = []
   for result in results:
@@ -309,7 +325,9 @@ def usersearch(search=None):
     results = g.conn.execute("SELECT * FROM Users U")
 
   review = g.conn.execute("SELECT R.username, M.title, R.rev_text, R.post_date FROM Movie M, Review_posted R WHERE R.mid = M.mid")
+  review = review.fetchall()
   rating = g.conn.execute("SELECT R.username, M.title, R.rating, R.post_date FROM Movie M, Rating_rated R WHERE R.mid = M.mid")
+  rating = rating.fetchall()
 
   final_results = []
   for result in results:
@@ -354,7 +372,9 @@ def characterearch(search=None):
     results = g.conn.execute("SELECT * FROM Character C")
 
   moviechar = g.conn.execute("SELECT A.pid, A.char_name, M.mid, M.title, M.length, M.language, M.release_date, M.production_co, M.genre FROM Acts_in A, Movie M WHERE A.mid=M.mid")
+  moviechar = moviechar.fetchall()
   actors = g.conn.execute("SELECT P.pid, P.name, A.char_name, A.mid FROM Person P, Acts_in A WHERE A.pid=P.pid") 
+  actors = actors.fetchall()
 
   final_results = []
   for result in results:
@@ -368,11 +388,11 @@ def characterearch(search=None):
     current_char["person_info"] = current_actor
     for mc in moviechar:
       if str(mc[1]) == str(result[0]):
-        current_movie.append([mc[3]])
+        current_movie.append([mc[3].encode('utf-8')])
     current_char["movie_info"] = current_movie
     final_results.append(current_char)
 
-  return render_template("/character-search.html", chosen_char = char_name, char_name = char_name, cinfo = cinfo, results = final_results)
+  return render_template("/character-search.html", char_name = char_name, cinfo = cinfo, results = final_results)
 
 
 # Example of adding new data to the database

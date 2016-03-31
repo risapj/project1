@@ -238,17 +238,19 @@ def index(search=None):
 
 
   if atype and category and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\' AND A.type = \'"+atype+"\'")
+  elif atype and category:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.type =\'"+atype+"\'")
+  elif atype and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.year = \'"+year+"\' AND A.type=\'" + atype + "\'")
+  elif category and year:
+    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
   elif atype:
     results=g.conn.execute("SELECT * FROM Awards A WHERE A.type = \'" + atype + "\'")
   elif category:
     results=g.conn.execute("SELECT * FROM Awards A WHERE A.category=\'" + category + "\'")
-  elif atype and category:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.category = \'" + category + "\'")
-  elif atype and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.type=\'" + atype + " \' AND A.year =\'"+year+"\'")
-  elif category and year:
-    results= g.conn.execute("SELECT * FROM Awards A WHERE A.category = \'" + category + "\' AND A.year =\'"+year+"\'")
+  elif year:
+    results = g.conn.execute("SELECT * FROM Awards A WHERE A.year = \'"+year+"\'")
   else:
     results=g.conn.execute("SELECT * FROM Awards A")
 
@@ -368,11 +370,11 @@ def characterearch(search=None):
     current_char["person_info"] = current_actor
     for mc in moviechar:
       if str(mc[1]) == str(result[0]):
-        current_movie.append([mc[3]])
+        current_movie.append([mc[3].encode('utf-8')])
     current_char["movie_info"] = current_movie
     final_results.append(current_char)
 
-  return render_template("/character-search.html", chosen_char = char_name, char_name = char_name, cinfo = cinfo, results = final_results)
+  return render_template("/character-search.html", char_name = char_name, cinfo = cinfo, results = final_results)
 
 
 # Example of adding new data to the database
