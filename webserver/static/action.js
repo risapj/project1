@@ -37,9 +37,9 @@ $(document).ready(function() {
     });
 
     $("#submit-char").click(function(){
-        var char_name = getInnerHTML("char");
+        var char_name = getInnerHTML("char_name");
         var url = 'http://104.41.144.56:8111/character-search';
-        window.location.href = url + '?char=' + char_name;
+        window.location.href = url + '?char_name=' + char_name;
     });
 
     $("#submit-username").click(function(){
@@ -52,4 +52,4 @@ $(document).ready(function() {
 function getInnerHTML(input){
 	var value = document.getElementById(input);
 	return value[value.selectedIndex].innerHTML;
-}k
+}

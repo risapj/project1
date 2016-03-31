@@ -252,8 +252,8 @@ def index(search=None):
   else:
     results=g.conn.execute("SELECT * FROM Awards A")
 
-  moviesp = g.conn.execute("SELECT M.mid, M.title, P.name, N.aid, N.won FROM Movie M, Person P, Nominated_p N WHERE N.mid=M.mid AND N.pid=P.pid")
-  moviesm = g.conn.execute("SELECT M.mid, M.title, N.aid, N.won FROM Movie M, Nominated_m N WHERE N.mid=M.mid")
+  moviesp = g.conn.execute("SELECT M.mid, M.title, P.name, N.aid, N.won FROM Movie M, Person P, Nominated_p N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid AND N.pid=P.pid")
+  moviesm = g.conn.execute("SELECT M.mid, M.title, N.aid, N.won FROM Movie M, Nominated_m N, Awards A WHERE N.mid=M.mid AND N.aid = A.aid")
 
   final_results = []
   for result in results:
@@ -338,6 +338,11 @@ def characterearch(search=None):
   forTable = g.conn.execute("SELECT * FROM Character")
   cinfo = forTable.fetchall()
 
+  ddmenu = g.conn.execute("SELECT * FROM Character")
+  charac = []
+  for result in ddmenu:
+    charac.append(result['char_name'].encode('utf-8'))
+
   char_name = request.args.get('char_name')
 
   if char_name == "All":
@@ -358,16 +363,16 @@ def characterearch(search=None):
     current_movie = []
     current_actor = []
     for actor in actors:
-      if actor[2] == result[0]:
+      if str(actor[2]) == str(result[0]):
         current_actor.append(actor[1])
     current_char["person_info"] = current_actor
     for mc in moviechar:
-      if mc[1] == result[0]:
+      if str(mc[1]) == str(result[0]):
         current_movie.append([mc[3]])
     current_char["movie_info"] = current_movie
     final_results.append(current_char)
 
-  return render_template("/character-search.html", cinfo = cinfo, results = final_results)
+  return render_template("/character-search.html", chosen_char = char_name, char_name = char_name, cinfo = cinfo, results = final_results)
 
 
 # Example of adding new data to the database

@@ -21,27 +21,26 @@
 
 
   <body>
-<div>{{results}}</div>
       <strong>Character Search</strong>
-      <select id="char">
+      <select id="char_name">
         <option>All</option>
-        {% for char in cinfo %}
-          {% if char[0] == chosen_char %}
-          <option selected>{{ char[0] }}</option>
+        {% for charac in cinfo %}
+          {% if charac[0] == chosen_char %}
+          <option selected>{{ charac[0] }}</option>
           {% else %}
-          <option>{{char[0]}}</option>
+          <option>{{charac[0]}}</option>
           {% endif %}
         {% endfor %}
       </select>
       <button id="submit-char" type="button" class="btn btn-primary">Submit</button> 
      
      {% for result in results %}
-       {% set info = result["info"] %}
-         <p>Character Name: {{info[0]}}</p>	
-       {% set pinfo = result["person_info"] %}
-	 <p>Actor/Actress: {{pinfo[0]}}
-       {% set minfo = result["movie_info"] %}
-	 <p>Movie: {{minfo[0]}}</p>
+             {% set info = result["info"] %}
+             <p>Character Name: {{info[0]}}</p>
+             {% set pinfo = result["person_info"] %}
+	     <p>Actor/Actress: {{pinfo[0]}}
+             {% set minfo = result["movie_info"] %}
+	     <p>Movie: {{minfo[0]}}</p>
      {% endfor %}
       <a href = "/">Go back to home page</a>
   </body>
