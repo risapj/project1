@@ -21,56 +21,45 @@
 
 
   <body>
-      <strong>People Search</strong>
-      <select id="name">
+      <strong>User Search</strong>
+      <select id="username">
         <option>All</option>
         {% for stuff in data2 %}
-          {% if stuff[1] == chosen_name %}
-          <option selected>{{ stuff[1]}}</option>
+          {% if stuff[0] == chosen_username %}
+          <option selected>{{ stuff[0]}}</option>
           {% else %}
-          <option>{{stuff[1]}}</option>
+          <option>{{stuff[0]}}</option>
           {% endif %}
         {% endfor %}
       </select>
-      <button id="submit-person" type="button" class="btn btn-primary">Submit</button>
+      <button id="submit-username" type="button" class="btn btn-primary">Submit</button>
 
       {% for result in results %}
              {% set info = result["info"] %}
          <h2>{{info[0]}}</h2>
          <p></p>
          <h4>Basic Information</h4>
-         <p><strong>Birthdate</strong>: {{info[1]}}</p>
-         <p><strong>Hometown</strong>: {{info[2]}}</p>
-         <p><strong>Education</strong>: {{info[3]}}</p>
+         <p><strong>Location</strong>: {{info[1]}}</p>
+         <p><strong>Gender</strong>: {{info[2]}}</p>
+         <p><strong>Age</strong>: {{info[3]}}</p>
          <p></p>
-         <p></p>
-         <h4>Acted In</h4>
-              {% set moviechar = result["moviechar"] %}
-         {% for mc in moviechar %}
-             <p>{{mc[1]}} released on {{mc[2]}} as {{mc[0]}}</p>
+             {% set review = result["review"] %}
+        <h4>Review</h4> 
+        {% for rev in review %}
+             <p><strong>Movie: </strong> {{rev[0]}}</p>
+             <p><strong>Review: </strong> {{rev[1]}}</p>      
+             <p><strong>Date posted: </strong> {{rev[2]}}</p>
          {% endfor %}
          <p></p>
-         <h4>Directs</h4>
-             {% set director = result["director"] %}
-         {% for d in director %}
-             <p>{{d[0]}} released on {{d[1]}}</p>
-         {% endfor %}
-         <p></p>
-         <h4>Writes</h4>
-             {% set writer = result["writer"] %}
-         {% for w in writer %}
-             <p>{{w[0]}} released on {{w[1]}}</p>
-         {% endfor %}
-         <p></p>
-         <h4> Awards</h4>
-             {% set award = result["award"] %}
-         {% for a in award %}
-             <p>{{a[0]}} - {{a[1]}} {{a[2]}} {{a[3]}}: {{a[4]}}</p>
+             {% set rating = result["rating"] %}
+         <h4>Rating</h4>
+         {% for rat in rating %}
+             <p><strong>Movie: </strong> {{rat[0]}}</p>
+             <p><strong>Rating: </strong> {{rat[1]}}</p>      
+             <p><strong>Date posted: </strong> {{rat[2]}}</p>
          {% endfor %}
       {% endfor %}
 
-
       <a href = "/">Go back to home page</a>
-
   </body>
 </html>

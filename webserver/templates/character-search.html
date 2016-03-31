@@ -5,15 +5,27 @@
       font-family:arial;
     }
   </style>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/jquery.js"></script>
+    <script src="../static/action.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    <!-- personal css -->
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Movie Database</title>
+  </head>
 
 
   <body>
-    <h1>Character Search</h1>
-    <div class="container">
+<div>{{results}}</div>
       <strong>Character Search</strong>
       <select id="char">
         <option>All</option>
-        {% for char in character %}
+        {% for char in cinfo %}
           {% if char[0] == chosen_char %}
           <option selected>{{ char[0] }}</option>
           {% else %}
@@ -21,7 +33,16 @@
           {% endif %}
         {% endfor %}
       </select>
-      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
-    </div> 
+      <button id="submit-char" type="button" class="btn btn-primary">Submit</button> 
+     
+     {% for result in results %}
+       {% set info = result["info"] %}
+         <p>Character Name: {{info[0]}}</p>	
+       {% set pinfo = result["person_info"] %}
+	 <p>Actor/Actress: {{pinfo[0]}}
+       {% set minfo = result["movie_info"] %}
+	 <p>Movie: {{minfo[0]}}</p>
+     {% endfor %}
+      <a href = "/">Go back to home page</a>
   </body>
 </html>

@@ -5,24 +5,75 @@
       font-family:arial;
     }
   </style>
-
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/jquery.js"></script>
+    <script src="../static/action.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    <!-- personal css -->
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Movie Database</title>
+  </head>
 
   <body>
+
+<div>{{results}}</div>
+
     <h1>Award Search</h1>
-    <div class="container">
       <strong>Award Search</strong>
-      <select id="award">
+      <select id="year">
         <option>All</option>
-        {% for award in awards %}
-          {% if award[0] == chosen_award %}
-          <option selected>{{ award[0] }}</option>
+        {% for award in awardYear %}
+          {% if award == chosen_award %}
+          <option selected>{{ award }}</option>
           {% else %}
-          <option>{{award[0]}}</option>
+          <option>{{award}}</option>
           {% endif %}
         {% endfor %}
       </select>
-      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
-    </div> 
+
+      <select id="atype">
+        <option>All</option>
+        {% for award in awardType %}
+          {% if award == chosen_award %}
+          <option selected>{{ award }}</option>
+          {% else %}
+          <option>{{award}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+      <select id="category">
+        <option>All</option>
+        {% for award in awardCat %}
+          {% if award == chosen_award %}
+          <option selected>{{ award }}</option>
+          {% else %}
+          <option>{{award}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button id="submit-award" type="button" class="btn btn-primary">Submit</button> 
+
+      {% for result in results %}
+              {% set info = result["info"] %}
+          <h2>Year: {{info[0]}} Type: {{info[1]}} Category: {{info[2]}}</h2>
+          <p></p>
+               {% set movp = result["moviep"] %}
+          {% for mp in movp %}
+              <p>{{mp[0]}}, {{mp[1]}}, {{mp[2]}}</p>
+          {% endfor %}
+               {% set movm = result["moviem"] %}
+          {% for m in movm %}
+              <p>{{m[0]}}, {{m[1]}}</p>
+          {% endfor %}
+      {% endfor %}
+      
+      <a href = "/">Go back to home page</a>
   </body>
 </html>
 

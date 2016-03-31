@@ -5,45 +5,23 @@
       font-family: arial;
     }
   </style>
-
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/jquery.js"></script>
+    <script src="../static/action.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    <!-- personal css -->
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Movie Database</title>
+  </head>
 
   <body>
     <h1>Movie Database</h1>
-<!--
-    <div class="container">
-      <button class="droptbtn">Search Category (hover)</button>
-      <div class="dropdown-content">
-        <a href="/movie-search">Movie</a>
-        <a href="/person-search">Person</a>
-        <a href="/award-search">Award</a>
-        <a href="character-search">Character</a>
-      </div>
-    </div>
 
-commented out to try stuff below
-
-<strong> Select a Movie </strong>
-<select id=foo>
-    <option>Please select</option>
-    {% for stuff in data %}
-    <option>{{stuff}}</option>
-    {% endfor %}
-</select>
--->
-<!--
-      <strong>Movie Search</strong>
-      <select id="title">
-        <option>All</option>
-        {% for stuff in data %}
-          {% if stuff == chosen_title %}
-          <option selected>{{ stuff}}</option>
-          {% else %}
-          <option>{{stuff}}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-      <button id="submit" type="button" class="btn btn-primary">Submit</button> 
--->
 <!-- below works, and sends you to the approriate page but pages dont work-->
 <select onchange="location = this.options[this.selectedIndex].value;">
     <option>Please select</option>
@@ -51,6 +29,7 @@ commented out to try stuff below
         <option value="/person-search">People</a>
         <option value="/award-search">Awards</a>
         <option value="/character-search">Characters</a>    
+	<option value="/user-search">Users</a>
 </select>
 
   </body>
