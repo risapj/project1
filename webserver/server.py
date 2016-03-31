@@ -77,7 +77,7 @@ def moviesearch(search=None):
   director = g.conn.execute("SELECT P.name, D.pid, D.mid FROM Person P, Directs D WHERE D.pid = P.pid")
   director = director.fetchall()
   writer = g.conn.execute("SELECT P.name, W.pid, W.mid FROM Person P, Writes W WHERE W.pid = P.pid")
-  writer = wrtier.fetchall()
+  writer = writer.fetchall()
   awards = g.conn.execute("SELECT A.year, A.type, A.category, N.won, P.name, N.mid FROM Awards A, Nominated_p N, Person p WHERE N.pid=P.pid AND N.aid=A.aid")
   awards = awards.fetchall()
   awardm = g.conn.execute("SELECT A.year, A.type, A.category, N.won, N.mid FROM Awards A, Nominated_m N WHERE N.aid=A.aid")
